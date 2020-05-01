@@ -6,7 +6,7 @@
     validate_certs: no
     cluster: "{{ vcenter_cluster }}"
     datacenter: "{{ vcenter_datacenter }}"
-    name: "bootstrap.{{ base_domain }}"
+    name: "bootstrap.{{ cluster_name }}.{{ base_domain }}"
     state: poweredon
 
 - name: Wait 30 Minutes for SSH on Bootstrap Node
@@ -24,7 +24,7 @@
     validate_certs: no
     cluster: "{{ vcenter_cluster }}"
     datacenter: "{{ vcenter_datacenter }}"
-    name: "{{ item }}.{{ base_domain }}"
+    name: "{{ item }}.{{ cluster_name }}.{{ base_domain }}"
     state: poweredon
   with_items:
     - "{{ groups[provision_group] }}"
@@ -48,7 +48,7 @@
     validate_certs: no
     cluster: "{{ vcenter_cluster }}"
     datacenter: "{{ vcenter_datacenter }}"
-    name: "{{ item }}.{{ base_domain }}"
+    name: "{{ item }}.{{ cluster_name }}.{{ base_domain }}"
     state: poweredon
   with_items:
     - "{{ groups[provision_group] }}"

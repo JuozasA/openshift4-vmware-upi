@@ -1,0 +1,18 @@
+{
+  "ignition": {
+    "config": {
+      "append": [
+        {
+          "source": "http://bastion.{{ cluster_name }}.{{ base_domain }}:{{ httpd_port }}/master.ign",
+          "verification": {}
+        }
+      ]
+    },
+    "timeouts": {},
+    "version": "2.1.0"
+  },
+  "networkd": {},
+  "passwd": {},
+  "storage": {},
+  "systemd": {}
+}

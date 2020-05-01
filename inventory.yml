@@ -2,23 +2,25 @@
 all:
   vars:
     provision_group: pg
-    ova_path: /tmp/rhcos-4.3.0-x86_64-vmware.ova
     ova_vm_name: rhcos-4.3.0-x86_64-vmware
-    cluster_name: vmware-upi
-    base_domain: vmware-upi.ocp.pwc.umbrella.local
+    ova_template_url: "https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/latest/latest/rhcos-4.3.0-x86_64-vmware.ova"
+    cluster_name: ocp-poc
+    base_domain: vivid.co.uk
     dhcp_server_dns_servers: 172.16.10.11
     dhcp_server_gateway: 172.16.10.254
     dhcp_server_subnet_mask: 255.255.255.0
     dhcp_server_subnet: 172.16.10.0
     load_balancer_ip: 172.16.10.171
+    ocp_client: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.8/openshift-client-linux-4.3.8.tar.gz"
+    ocp_installer: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.3.8/openshift-install-linux-4.3.8.tar.gz"
   children:
     webserver:
       hosts:
-        lb.vmware-upi.ocp.pwc.umbrella.local:
+        bastion.ocp-poc.vivid.co.uk:
           httpd_port: 8080
     loadbalancer:
       hosts:
-        lb.vmware-upi.ocp.pwc.umbrella.local:
+        bastion.ocp-poc.vivid.co.uk:
     pg:
       hosts:
         bootstrap:
@@ -54,3 +56,6 @@ all:
           ip: 172.16.10.136
           memory: 24576
           cores: 4
+    nn:
+      hosts:
+        worker2: {}

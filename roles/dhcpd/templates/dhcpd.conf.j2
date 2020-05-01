@@ -1,4 +1,4 @@
-option domain-name "{{ base_domain }}";
+option domain-name "{{ cluster_name }}.{{ base_domain }}";
 option domain-name-servers {{ dhcp_server_dns_servers }};
 default-lease-time 1800;
 max-lease-time 7200;
@@ -8,14 +8,14 @@ log-facility local7;
 subnet {{ dhcp_server_subnet }} netmask {{ dhcp_server_subnet_mask }} {
     option routers {{ dhcp_server_gateway }};
     option subnet-mask {{ dhcp_server_subnet_mask }};
-    option domain-search "{{ base_domain }}";
-	option domain-name "{{ base_domain }}";
+    option domain-search "{{ cluster_name }}.{{ base_domain }}";
+	option domain-name "{{ cluster_name }}.{{ base_domain }}";
     option domain-name-servers {{ dhcp_server_dns_servers }};
 }
 
 {% for item in hostvars['localhost'].host_mac_list %}
 host {{ item.name }} {
-    option host-name "{{ item.name }}.{{ base_domain }}";
+    option host-name "{{ item.name }}.{{ cluster_name }}.{{ base_domain }}";
     hardware ethernet {{ item.mac }};
     fixed-address {{ item.ip }};
 }

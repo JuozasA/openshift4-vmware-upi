@@ -29,12 +29,12 @@
     body:
       method: dnsrecord_add
       params:
-      - - "{{ base_domain }}."
+      - - "{{ cluster_name }}.{{ base_domain }}."
         - _etcd-server-ssl._tcp
       - srv_part_priority: '0'
         srv_part_weight: '10'
         srv_part_port: '2380'
-        srv_part_target: "{{ item }}.{{ base_domain }}."
+        srv_part_target: "{{ item }}.{{ cluster_name }}.{{ base_domain }}."
     body_format: json
   with_items:
     - "etcd-0"
@@ -54,7 +54,7 @@
     body:
       method: dnsrecord_add
       params:
-      - - "{{ base_domain }}."
+      - - "{{ cluster_name }}.{{ base_domain }}."
         - "{{ item }}"
       - a_part_ip_address: "{{ hostvars[item].ip }}"
         a_extra_create_reverse: true
@@ -65,7 +65,7 @@
 - name: Create api/api-int Records
   ipa_dnsrecord:
     name: "{{ item }}"
-    zone_name: "{{ base_domain }}"
+    zone_name: "{{ cluster_name }}.{{ base_domain }}"
     record_type: A
     record_value: "{{ load_balancer_ip }}"
     ipa_host: "{{ ipa_hostname }}"
@@ -79,7 +79,7 @@
 - name: Create Wildcard for Applications
   ipa_dnsrecord:
     name: "*.apps"
-    zone_name: "{{ base_domain }}"
+    zone_name: "{{ cluster_name }}.{{ base_domain }}"
     record_type: A
     record_value: "{{ load_balancer_ip }}"
     ipa_host: "{{ ipa_hostname }}"
@@ -90,7 +90,7 @@
 - name: Create etcd-x Records
   ipa_dnsrecord:
     name: "{{ hostvars[item].etcd_name }}"
-    zone_name: "{{ base_domain }}"    
+    zone_name: "{{ cluster_name }}.{{ base_domain }}"    
     record_type: A
     record_value: "{{ hostvars[item].ip }}"
     ipa_host: "{{ ipa_hostname }}"

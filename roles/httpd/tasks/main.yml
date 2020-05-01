@@ -31,6 +31,45 @@
     mode: 0644
     setype: httpd_sys_content_t
 
+# pull installer and oc client images
+- name: Downloading OCP4 client
+  get_url:
+    url: "{{ ocp_client }}"
+    dest: /usr/local/src/openshift-client-linux.tar.gz
+
+- name: Downloading OCP4 Installer
+  get_url:
+    url: "{{ ocp_installer }}"
+    dest: /usr/local/src/openshift-install-linux.tar.gz
+
+- name: Unarchiving OCP4 client
+  unarchive:
+    src: /usr/local/src/openshift-client-linux.tar.gz
+    dest: /usr/local/bin
+    remote_src: yes
+
+- name: Unarchiving OCP4 Installer
+  unarchive:
+    src: /usr/local/src/openshift-install-linux.tar.gz
+    dest: /usr/local/bin
+    remote_src: yes
+
+- name: Removing files that are not needed
+  file:
+    path: /usr/local/bin/README.md
+    state: absent
+
+- name: Copy install-config.yaml template
+  template:
+    src: templates/install-config.yaml.j2
+    dest: /root/ocp4/install-config.yaml
+
+- name: Generate ignition configs
+  shell: "openshift-install create ignition-configs --dir=/root/ocp4"
+
+- name: Copy Ingition configs to web server location
+  shell: "cp /root/ocp4/*.ign /var/www/html/"
+
 - name: Restore SELinux Contexts in Document Root
   shell: restorecon -R /var/www/html
 
@@ -39,3 +78,4 @@
     name: httpd
     state: started
     enabled: yes
+

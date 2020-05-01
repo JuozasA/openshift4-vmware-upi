@@ -1,9 +1,47 @@
 ---
+- name: Create ignition configs
+  hosts: localhost
+  tasks:
+    - name: Copy bootstrap ignition template
+      template:
+        src: pre-flight/templates/bootstrap.ign.j2
+        dest: pre-flight/files/bootstrap.ign
+
+    - name: Read bootstrap ignition file
+      shell: cat pre-flight/files/bootstrap.ign
+      register: read_bootstrap
+
+    - set_fact:
+        base64_bootstrap: "{{ read_bootstrap | string | b64encode }}"
+
+    - name: Copy master ignition template
+      template:
+        src: pre-flight/templates/bootstrap.ign.j2
+        dest: pre-flight/files/bootstrap.ign
+
+    - name: Read master ignition file
+      shell: cat pre-flight/files/bootstrap.ign
+      register: read_master
+
+    - set_fact:
+        base64_master: "{{ read_master | string | b64encode }}"
+
+    - name: Copy worker ignition template
+      template:
+        src: pre-flight/templates/bootstrap.ign.j2
+        dest: pre-flight/files/bootstrap.ign
+
+    - name: Read worker ignition file
+      shell: cat pre-flight/files/bootstrap.ign
+      register: read_worker
+
+    - set_fact:
+        base64_worker: "{{ read_worker | string | b64encode }}"
+   
 - name: Provision OpenShift 4 Environment
   hosts: localhost
   vars_files:
     - vault.yml
-    - base64.yml
   roles:
     - role: ipa
       tags:
@@ -22,6 +60,11 @@
     - role: haproxy
       tags:
         - haproxy
+
+- name: Setup Web Server Host
+  hosts: webserver
+  become: yes
+  roles:
     - role: httpd
       tags:
         - httpd
@@ -31,6 +74,6 @@
   vars_files:
     - vault.yml
   roles:
-   - role: boot-instances
-     tags:
+    - role: boot-instances
+      tags:
         - boot-instances 

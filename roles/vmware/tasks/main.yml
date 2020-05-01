@@ -1,3 +1,8 @@
+- name: Download OVA template
+  get_url:
+    url: "{{ ova_template_url }}"
+    dest: "/tmp/{{ ova_vm_name }}"
+
 - name: Create Cluster Folder
   vcenter_folder:
     hostname: "{{ vcenter_hostname }}"
@@ -23,7 +28,7 @@
     disk_provisioning: thin
     name: "{{ ova_vm_name }}"
     networks: "{u'VM Network':u'{{ vcenter_network }}'}"
-    ova: "{{ ova_path }}"
+    ova: "/tmp/{{ ova_vm_name }}"
     power_on: no
 
 - name: Create VMs
@@ -41,7 +46,7 @@
       memory_mb: "{{ hostvars[item].memory }}"
       num_cpus: "{{ hostvars[item].cores }}"
       num_cpu_cores_per_socket: "{{ hostvars[item].cores }}"
-    name: "{{ item }}.{{ base_domain }}"
+    name: "{{ item }}.{{ cluster_name }}.{{ base_domain }}"
     state: present
     template: "{{ ova_vm_name }}"
     customvalues:
@@ -62,7 +67,7 @@
     password: "{{ vcenter_password }}"
     validate_certs: no
     datacenter: "{{ vcenter_datacenter }}"
-    name: "{{ item }}.{{ base_domain }}"
+    name: "{{ item }}.{{ cluster_name }}.{{ base_domain }}"
   register: vmware_guest_facts_results
   with_items:
     - "{{ groups[provision_group] }}"

@@ -11,7 +11,7 @@
           lineinfile:
             dest: ~/.ssh/known_hosts
             state: absent
-            regexp: "^.*{{ item }}.{{ base_domain }}.*$"
+            regexp: "^.*{{ item }}.{{ cluster_name }}.{{ base_domain }}.*$"
           with_items:
             - "{{ groups[provision_group] }}"
     
